@@ -1,0 +1,1579 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="脱壳的常用方法, C++,Linux,Go,Blog">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>脱壳的常用方法 | 隙驹</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loader页面消失采用渐隐的方式*/
+        -webkit-transition: opacity 0.6s ease;
+        -moz-transition: opacity 0.6s ease;
+        -o-transition: opacity 0.6s ease;
+        transition: opacity 0.6s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .2s infinite;
+        animation: pacman-balls 1s linear .2s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .4s infinite;
+        animation: pacman-balls 1s linear .4s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .59s infinite;
+        animation: pacman-balls 1s linear .59s infinite
+    }
+
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .3s 0s infinite;
+        animation: rotate_pacman_half_up .3s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .3s 0s infinite;
+        animation: rotate_pacman_half_down .3s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo出现动画 */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
+    const loaded = function(){
+       setTimeout(function(){
+            const loader = document.getElementById("loading-container");
+            loader.className="fadeout" ;//使用渐隐的方法淡出loading page
+            // document.getElementById("body-wrap").style.display="flex";
+            setTimeout(function(){
+                loader.style.display="none";
+            },600); 
+        },600);//强制显示loading page 0.6s  
+    };
+    loaded();
+})()
+ </script><meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-material-dark.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"><style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loader页面消失采用渐隐的方式*/
+        -webkit-transition: opacity 0.6s ease;
+        -moz-transition: opacity 0.6s ease;
+        -o-transition: opacity 0.6s ease;
+        transition: opacity 0.6s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .2s infinite;
+        animation: pacman-balls 1s linear .2s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .4s infinite;
+        animation: pacman-balls 1s linear .4s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .59s infinite;
+        animation: pacman-balls 1s linear .59s infinite
+    }
+
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .3s 0s infinite;
+        animation: rotate_pacman_half_up .3s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .3s 0s infinite;
+        animation: rotate_pacman_half_down .3s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo出现动画 */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
+    const loaded = function(){
+       setTimeout(function(){
+            const loader = document.getElementById("loading-container");
+            loader.className="fadeout" ;//使用渐隐的方法淡出loading page
+            // document.getElementById("body-wrap").style.display="flex";
+            setTimeout(function(){
+                loader.style.display="none";
+            },600); 
+        },600);//强制显示loading page 0.6s  
+    };
+    loaded();
+})()
+ </script></head>
+
+
+
+ <div id="loading-container">
+     <p class="loading-text">玩命加载中 . . . </p> 
+     <div class="loading-image">
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div> 
+         <div></div>
+     </div>
+ </div><body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">隙驹</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">隙驹</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.png')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">脱壳的常用方法</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/CTF/">
+                                <span class="chip bg-color">CTF</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/CTF/" class="post-category">
+                                CTF
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2020-04-04
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2020-05-26
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    3.6k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    12 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="脱壳的常用方法"><a href="#脱壳的常用方法" class="headerlink" title="脱壳的常用方法"></a>脱壳的常用方法</h1><h2 id="什么是壳"><a href="#什么是壳" class="headerlink" title="什么是壳"></a>什么是壳</h2><p>  大家应该先明白“壳”的概念。在自然界中，我想大家对”壳”这东西应该都不会陌生了，植物用它来保护种子，动物用它来保护身体等等。同样，在一些计算机软件里也有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（当然后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”了。就像计算机病毒和自然界的病毒一样，其实都是命名上的方法罢了。</p>
+<hr>
+<h2 id="壳的作用"><a href="#壳的作用" class="headerlink" title="壳的作用"></a>壳的作用</h2><p>1 写好一个程序后，不想让别人随便更改其中的版权信息，我们可以加壳对其进行保护防止被修改。</p>
+<ul>
+<li>加密壳</li>
+</ul>
+<p>2 可以利用压缩壳减少程序容量，方便程序传播。</p>
+<ul>
+<li>压缩壳</li>
+</ul>
+<p>3 帮助木马病毒进行免杀，我们可以直接加壳免杀，也可以<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fwww.52pojie.cn%2Fforum-5-1.html" target="_blank" rel="noopener">脱壳</a>对其代码进行修改从而躲过杀毒软件的查杀。</p>
+<ul>
+<li>病毒壳</li>
+</ul>
+<hr>
+<h2 id="脱壳的基础知识"><a href="#脱壳的基础知识" class="headerlink" title="脱壳的基础知识"></a>脱壳的基础知识</h2><h3 id="1壳是怎么装载的？"><a href="#1壳是怎么装载的？" class="headerlink" title="1壳是怎么装载的？"></a>1壳是怎么装载的？</h3><p>  壳自从加到程序上以后就连在一起了，即对程序进行保护，防止被修改，也就是壳把程序给包裹起来了，而且原程序的数据也被压缩了。  </p>
+<p>  装载的时候通常是先执行壳后再跳到真正的原程序OEP（程序入口点），这时开始运行原先没加壳的程序。运行顺序：执行带壳文件——执行壳——执行到程序入口点——运行未加壳的程序。</p>
+<h3 id="2-壳的分类"><a href="#2-壳的分类" class="headerlink" title="2 壳的分类"></a>2 壳的分类</h3><p>  壳出于程序作者想对程序资源压缩、注册保护的目的，壳一般分为压缩壳和加密壳两类。</p>
+<p>​     压缩壳：一般只对文件进行压缩处理，既压缩区段和一些资源压缩，以减少文件体积为目的如：ASPack、UPX、PECompact等</p>
+<p>​     加密壳：跟压缩壳正好相反，一般是牺牲减少体积为代价，对文件进行加密处理，用上各种反跟踪技术保护程序不被调试、脱壳，如：ASProtect、Armadillo、EXECryptor等</p>
+<p>但随着加壳技术的发展，这两类壳之间的界限越来越模糊，很多加壳软件既有压缩功能也有保护性能，而且现在很多加密壳达到壳中带肉，肉中带壳的地步了。 </p>
+<h3 id="3-OEP-（程序入口点）"><a href="#3-OEP-（程序入口点）" class="headerlink" title="3 OEP （程序入口点）"></a>3 OEP （程序入口点）</h3><p>OEP：Original Entry Point ，程序加壳前真正的入口点。 </p>
+<h3 id="4-脱壳的基本步骤"><a href="#4-脱壳的基本步骤" class="headerlink" title="4 脱壳的基本步骤"></a>4 脱壳的基本步骤</h3><p>查壳(<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fwww.52pojie.cn%2Fthread-12865-1-1.html" target="_blank" rel="noopener">PEID</a>、FI、PE-SCAN)—&gt;寻找OEP(OD)—&gt;脱壳/Dump(LordPE、PeDumper、OD自带的脱壳插件、PETools)—&gt;修复(Import REConstructor)</p>
+<hr>
+<p><img src="06.png" alt=""></p>
+<h3 id="0x01-查壳"><a href="#0x01-查壳" class="headerlink" title="0x01 查壳"></a>0x01 查壳</h3><p>由于近年来CTF比赛中带壳的逆向题出现频率稍有增加，在静态分析之前，进行查壳是非常有必要的，常用的工具有PEID等，</p>
+<p><img src="02.png" alt=""></p>
+<p>进行查壳后，如果是简单且常见的壳如UPX等，那么直接可以使用工具完成脱壳，</p>
+<p><img src="06.png" alt="">如果一时半会找不到可用的工具，也可以尝试手工脱壳，例如ASPack工具压缩的壳就能够采用ESP定律来脱除。如果是侧重考察脱壳的题，一般程序本身就比较简单了，可以这样说，这类题如果能成功脱壳，基本上也算是做出来了。当然，脱壳并不能解决所有问题，之前有CTF比赛中甚至出现了VMP的题目，</p>
+<ul>
+<li>与其它大部分的保护程序不同，VMProtect可修改程序的源代码 。VMProtect可将被保护文件中的部分代码转化到在虚拟机（以下称作VM）上运行的程序（以下称作bytecode）中。您同样可把VM想象为具备命令系统的虚拟处理器，该命令系统与Intel 8086处理器所使用的完全不同。</li>
+</ul>
+<p>对于这种情况，还是建议使用调试器去动态调试，毕竟在逆向工程中太依赖IDA的F5功能也是不行的，还是应该锻炼自己的汇编指令阅读能力。如果是VMP比较新的版本，可能还需要使用Sharp OD等插件来隐藏调试行为。</p>
+<h2 id="常用脱壳方法"><a href="#常用脱壳方法" class="headerlink" title="常用脱壳方法"></a>常用脱壳方法</h2><h3 id="1-单步跟踪法"><a href="#1-单步跟踪法" class="headerlink" title="1 单步跟踪法"></a>1 单步跟踪法</h3><p>（1）用OD载入，点“不分析代码”</p>
+<p>（2）单步向下跟踪F8，实现向下的跳。也就是说向上的跳不让其实现（通过F4）</p>
+<p>（3）遇到程序往回跳的（包括循环），我们在下一句代码处按F4（或者右健单击代码，选择断点——&gt;运行到所选）</p>
+<p>（4）绿色线条表示跳转没实现，不用理会，红色线条表示跳转已经实现</p>
+<p>（5）如果刚载入程序，在附近就有一个CALL的，我们就F7跟进去，不然程序很容易跑 飞，这样很快就能到程序的OEP</p>
+<p>（6）在跟踪的时候，如果运行到某个CALL程序就运行的，就在这个CALL中F7进入</p>
+<p>（7）一般有很大的跳转（大跨段），比如 jmp XXXXXX 或者 JE XXXXXX 或者有RETN 的一般很快就会到程序的OEP</p>
+<p>注：在有些壳无法向下跟踪的时候，我们可以在附近找到没有实现的大跳转，右键–&gt;“跟随”,然后F2下断，Shift+F9运行停在“跟随”的位置，再取消断点，继续F8单步跟踪。一般情况下可以轻松到达OEP </p>
+<h3 id="2-ESP定律法"><a href="#2-ESP定律法" class="headerlink" title="2 ESP定律法"></a>2 ESP定律法</h3><p>ESP定理脱壳（ESP在OD的寄存器中，我们只要在命令行下ESP的硬件访问断点，就会一下来到程序的OEP了！）</p>
+<p>（1）开始就点F8，注意观察OD右上角的寄存器中ESP有没突现（变成红色）（这只是一 般情况下，更确切的说我们选择的ESP值是关键句之后的第一个ESP值）</p>
+<p>（2）在命令行下：dd XXXXXXXX(指在当前代码中的ESP地址，或者是hr XXXXXXXX)， 按回车</p>
+<p>（3）选中下断的地址，断点—&gt;硬件访—&gt;WORD断点</p>
+<p>（4）按一下F9运行程序，直接来到了跳转处，按下F8，到达程序OEP </p>
+<h3 id="3内存镜像法"><a href="#3内存镜像法" class="headerlink" title="3内存镜像法"></a>3内存镜像法</h3><p>（1）用OD打开软件</p>
+<p>（2）点击选项——调试选项——异常，把里面的忽略全部√上。CTRL+F2重载下程序</p>
+<p>（3）按ALT+M,打开内存镜象，找到程序的第一个.rsrc.按F2下断点，然后按SHIFT+F9运 行到断点，接着再按ALT+M,打开内存镜象，找到程序的第一个.rsrc.上面的.CODE（也 就是00401000处），按F2下断点。然后按SHIFT+F9（或者是在没异常情况下按F9）， 直接到达程序OEP </p>
+<h3 id="4-一步到达OEP"><a href="#4-一步到达OEP" class="headerlink" title="4 一步到达OEP"></a>4 一步到达OEP</h3><p>（1）开始按Ctrl+F,输入：popad（只适合少数壳，包括UPX，ASPACK壳），然后按下F2， F9运行到此处</p>
+<p>（2）来到大跳转处，点下F8，到达OEP </p>
+<h3 id="5-最后一次异常法"><a href="#5-最后一次异常法" class="headerlink" title="5 最后一次异常法"></a>5 最后一次异常法</h3><p>（1）用OD打开软件</p>
+<p>（2）点击选项——调试选项——异常，把里面的√全部去掉！CTRL+F2重载下程序</p>
+<p>（3）一开始程序就是一个跳转，在这里我们按SHIFT+F9，直到程序运行，记下从开始按SHIFT+F9到程序运行的次数m</p>
+<p>（4）CTRL+F2重载程序，按SHIFT+F9（这次按的次数为程序运行的次数m-1次）</p>
+<p>（5）在OD的右下角我们看见有一个”SE 句柄”，这时我们按CTRL+G，输入SE 句柄前的地址</p>
+<p>（6）按F2下断点，然后按SHIFT+F9来到断点处</p>
+<p>（7）去掉断点，按F8慢慢向下走</p>
+<p>（8）到达程序的OEP </p>
+<h3 id="6-模拟跟踪法"><a href="#6-模拟跟踪法" class="headerlink" title="6 模拟跟踪法"></a>6 模拟跟踪法</h3><p>（1）先试运行，跟踪一下程序，看有没有SEH暗桩之类</p>
+<p>（2）ALT+M打开内存镜像，找到（包含那一列中出现SFX,imports,relocations或者SFX,输 入表，重定位）</p>
+<p>（3）若地址为00xxxxxx在命令行下输入tc eip&lt;00xxxxxx，回车，提示正在跟踪</p>
+<h3 id="7-SFX法"><a href="#7-SFX法" class="headerlink" title="7 SFX法"></a>7 SFX法</h3><p>（1）设置OD，忽略所有异常，也就是说异常选项卡里面都打上勾</p>
+<p>（2）切换到SFX选项卡，选择“字节模式跟踪实际入口（速度非常慢）”，确定</p>
+<p>（3）重载程序（如果跳出是否“压缩代码？”选择“否”，OD直接到达OEP）</p>
+<h2 id="ESP定律法"><a href="#ESP定律法" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><ul>
+<li>ESP定律法是脱壳的利器，是应用频率最高的脱壳方法之一。</li>
+<li>原理：ESP定律的原理在于程序中堆栈平衡的合理利用。由于在程序自解密或者自解压过程中，不少壳会先将当前寄存器内容压栈，如使用pushad，在解压结束后，会将之前的寄存器值出栈，如使用popad。因此在寄存器出栈时，往往程序代码被自动恢复，此时硬件断点触发。然后在程序当前位置，只需要少许单步跟踪，就很容易到达正确的OEP位置。</li>
+<li>PUSHAD指令压入32位寄存器，其入栈顺是:EAX,ECX,EDX,EBX,ESP,EBP,ESI,EDI .即把所有的寄存器都压栈。</li>
+<li>“堆栈平衡”原理：call命令是访问子程序的一个汇编基本指令，它先向堆栈中压入下一行程序的地址，再JMP到call的子程序地址处。与call对应的就是RETN，将当前的ESP中指向的地址出栈；JMP到这个地址。这里有一个前提：如果我们要返回父程序，则当我们在堆栈中进行堆栈的操作的时候，一定要保证在RETN这条指令之前，ESP指向的是我们压入栈中的地址。Call和retn的时候地址是对应的，这就是“堆栈平衡”。<br>＃＃＃ｅｓｐ定律适用范围：几乎全部的压缩壳,部分加密壳。</li>
+</ul>
+<h3 id="脱壳步骤："><a href="#脱壳步骤：" class="headerlink" title="脱壳步骤："></a>脱壳步骤：</h3><ul>
+<li>1、单步运行，右侧寄存器ESP为红色，说明esp值改变。当前ESP为pushad压栈当前所有寄存器以后的栈顶位置。根据“堆栈平衡”原理。脱壳以后，还会在这个位置出栈。<br><img src="11.png" alt="img"></li>
+<li>脱壳前寄存器值：</li>
+</ul>
+<p><img src="12.png" alt="img"></p>
+<ul>
+<li>2、所以，我们右键esp，选择在数据窗口跟随</li>
+</ul>
+<p><img src="13.png" alt="img"></p>
+<ul>
+<li>3、在数据窗口，我们选一个位置,右键“断点”-&gt;“硬件访问”-&gt;“Byte”设置硬件断点，然后“调试”-&gt;“硬件断点”，查看断点。</li>
+<li>为什么要在这里设置断点(⊙o⊙)?因为我们可以把壳看成一个子程序，解压缩或者解密完了，它要把控制权交还给主程序。一开始pushad入栈，返回程序本身的时候要在同样的位置出栈，ESP是栈顶指针，出栈时栈顶指针和入栈时相同，而出栈时，壳的部分运行完成了，也就到了OPE附近。</li>
+</ul>
+<p><img src="14.png" alt="img"></p>
+<ul>
+<li>4、运行程序到断点处，删除断点。删除断点是因为如果硬件断点一直存在，那么程序一直跑就有可能一直断下来，很不方便。根据ESP定律，程序入口在断点附近。</li>
+</ul>
+<p><img src="15.png" alt="img"></p>
+<ul>
+<li><p>此时的寄存器，可以看到，除了EIP，其他和pushad时完全一样。<br><img src="16.png" alt="img"></p>
+</li>
+<li><p>5、单步运行，找到OPE<br><img src="17.png" alt="img"></p>
+</li>
+<li><p>6、用OllyDumpEx脱壳</p>
+<p><img src="04.png" alt=""></p>
+</li>
+</ul>
+<h2 id="一步直达法"><a href="#一步直达法" class="headerlink" title="一步直达法"></a>一步直达法</h2><ul>
+<li>这个非常简单，但是有适用范围，适用于USP和aspack</li>
+<li>原理：开头有pushad入栈，那么一定会有popad出栈，出栈时就说解压缩完成后，到达了OPE附近。</li>
+<li>步骤：</li>
+<li>直接搜索ＰＯＰＡＤ，然后Ｆ４，运行到ＰＯＰＡＤ</li>
+<li>然后F2，F9执行到这里，来到大跳转处，到达OEP </li>
+<li>即可找到ＯＰＥ<br><img src="18.png" alt="img"></li>
+</ul>
+<p>－　注意：不要勾选整个块</p>
+<p>－　如图，ｊｕｍｐ过去以后就是ＯＰＥ<br><img src="19.png" alt="img"></p>
+<h2 id="内存镜像法"><a href="#内存镜像法" class="headerlink" title="内存镜像法"></a>内存镜像法</h2><h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ul>
+<li><p>依次选择OD选项（T）下的调试设置（D）子选择，弹出如下对话框，切到异常选项卡，将忽略下的子项全部勾上</p>
+<p><img src="05.png" alt=""></p>
+</li>
+</ul>
+<ul>
+<li>1、Alt+M查看内存<br><img src="20.png" alt="img"></li>
+<li>2、找到程序段的第一个.rsrc ,设置中断访问并运行。<br><img src="21.png" alt="img"></li>
+<li>3、再设一次断点，运行<br><img src="22.png" alt="img"></li>
+<li>4、单步运行，又到了popad<br><img src="23.png" alt="img"></li>
+<li>5、找到OPE，脱壳<br><img src="24.png" alt="img"></li>
+</ul>
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><p><img src="25.png" alt="img"></p>
+<ul>
+<li>问题：出错，第二次设断运行后，没有删除内存断点，再单步时出错。</li>
+<li>解决：出错是因为没有删除访问中断，删除访问中断就可以了。</li>
+</ul>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
+<li>断点：让程序在运行时暂停到特定的代码段，下断点是调试器的功能之一，可以让程序中断在需要的地方，从而方便其分析。</li>
+<li>常用的断点包括：INT3断点、硬件断点、内存断点、消息断点、条件断点等。</li>
+<li>内存访问断点分为，内存访问断点和内存写入断点。</li>
+<li>内存访问：代码段的代码访问内存数据。</li>
+<li>内存写入：代码段的代码执行完成后把数据写入内存</li>
+<li>内存访问断点：代码段的代码访问内存数据的时候，程序暂停。</li>
+<li>内存写入断点：代码段的代码写入内存数据的时候，程序暂停。</li>
+<li>如果给内存设内存访问断点，那么，程序就会在读取该内存数据的代码上中断。</li>
+<li>比如：<img src="26.png" alt="img"><br>寄存器间接寻址，操作数在以该寄存器中的内容为偏移地址的内存单元中，把以“ecx”值为地址的内存单元的值赋予dl，如果在地址为“ecx”值的内存下断点，那么，程序运行到这一条指令时就会中断。</li>
+<li>壳在解压缩时，需要在内存读取压缩过的源代码，进行解压缩，然后再进行内存写入。</li>
+<li>第一次内存断点设在资源段，假设解压顺序是先代码段，数据段，再资源段，那么。资源段发生写入中断时，程序就已经完成了代码段和数据段的解压。然后，我们在解压完成的基础上，在代码段下第二个断点，程序再次中断时，就运行到了代码段的OPE附近。</li>
+<li>在第二次中断后，经过几次单步运行即可到达OPE。</li>
+</ul>
+
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">隙驹</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://www.gapcolt.com/2020/04/04/tuo-ke-de-chang-yong-fang-fa/">https://www.gapcolt.com/2020/04/04/tuo-ke-de-chang-yong-fang-fa/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">隙驹</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/CTF/">
+                                    <span class="chip bg-color">CTF</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2020/04/04/ctf-fen-xi-liu-cheng/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/10.png" class="responsive-img" alt="CTF分析流程">
+                        
+                        <span class="card-title">CTF分析流程</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            CTF中逆向的分析思路0x00 判断文件类型我们拿到的题目一般是一个二进制可执行文件，而其中的大部分不是Windows平台下的PE文件就是Linux平台下的ELF文件。
+不管题目中所给文件带有什么扩展名，我们都应该亲自去检查文件头，使用任意
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-04
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/CTF/" class="post-category">
+                                    CTF
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/CTF/">
+                        <span class="chip bg-color">CTF</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/03/24/quan-xiao-mao-you-xi/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6.png" class="responsive-img" alt="圈小猫游戏">
+                        
+                        <span class="card-title">圈小猫游戏</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            最近发现一个H5的小游戏，挺有趣的点击此处玩游戏哦
+
+
+
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-24
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            隙驹
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%B8%B8%E6%88%8F/">
+                        <span class="chip bg-color">游戏</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 隙驹<br />'
+            + '文章作者: 隙驹<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 15px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">2020</span>
+            <a href="/about" target="_blank">隙驹</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">25k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2020";
+                    var startMonth = "3";
+                    var startDate = "20";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/horel" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:1494255412@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1494255412" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1494255412" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+    <a href="https://www.zhihu.com/people/lan-an-53-95" class="tooltipped" target="_blank" data-tooltip="关注我的知乎: https://www.zhihu.com/people/lan-an-53-95" data-position="top" data-delay="50">
+        <i class="fab fa-zhihu1">知</i>
+    </a>
+
+
+
+</div>
+    </div>
+    
+<canvas class="fireworks" style="position: fixed; left: 0; top: 0; z-index: 1; pointer-events: none;" ></canvas>
+<script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+<script type="text/javascript" src="/js/fireworks.js"></script>
+
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/search.xml", 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" color="0,0,255"
+        pointColor="0,0,255" opacity='0.7'
+        zIndex="-1" count="200"
+        src="/libs/background/canvas-nest.js"></script>
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+<!--动态标题-->
+<script type="text/javascript">
+    var OriginTitile=document.title,st;
+	document.addEventListener("visibilitychange",function(){
+        document.hidden?(document.title="ヽ(●-`Д´-)ノ你要玩捉迷藏嘛",clearTimeout(st)):(document.title="(Ő∀Ő3)ノ好哦！",st=setTimeout(function(){document.title=OriginTitile},3e3))
+    })
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"left","width":150,"height":320,"hOffset":0},"mobile":{"show":true,"scale":0.7,"hOffset":0},"react":{"opacity":1}});</script></body>
+
+</html>
